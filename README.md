@@ -2,7 +2,7 @@
 Optimized kernels for ring-attention [WIP]
 
 
-### Weekly ring-attn Meeting
+### Weekly Meeting
 
 Every Sunday 5 PM UTC we meet in the "General" voice channel of the CUDA MODE discord server. You can contact us any time asynchronously in the `#ring-attention` channel.
 
@@ -27,6 +27,11 @@ Every Sunday 5 PM UTC we meet in the "General" voice channel of the CUDA MODE di
 - [Incremental Softmax](https://colab.research.google.com/drive/1PNDTLx2UYYk8XmTb9e_ZBxPx8P6eByvx?usp=sharing) (to understand the algorithm in 'high-level' pytorch)
 - [Naive flash-attn](https://colab.research.google.com/drive/1X-x6PCRydNY9LZBPLA0DZh3Tj2Dyz60M?usp=sharing) (to understand the algorithm in 'high-level' pytorch)
 
+
+### Development References
+- [NVIDIA Collective Communication Library (NCCL) Documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/index.html)
+- [PyTorch Distributed Overview](https://pytorch.org/docs/stable/distributed.html)
+- [Distributed communication package - torch.distributed](https://pytorch.org/docs/stable/distributed.html) (`send()`, `recv()`, `broadcast()`, etc.)
 
 ## How to contribute
 
