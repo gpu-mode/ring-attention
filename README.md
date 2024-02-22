@@ -12,15 +12,17 @@ Every Sunday 5 PM UTC we meet in the "General" voice channel of the CUDA MODE di
 - Paper: [Ring Attention with Blockwise Transformers for Near-Infinite Context](https://arxiv.org/abs/2310.01889)
   - code: [lhao499/ring-attention](https://github.com/lhao499/ring-attention)
 - Paper: [World Model on Million-Length Video And Language With RingAttention](https://arxiv.org/abs/2402.08268)
-  - code: [LargeWorldModel/LWM](https://github.com/LargeWorldModel/LWM), 
+  - code: [LargeWorldModel/LWM](https://github.com/LargeWorldModel/LWM),
   - project site: [largeworldmodel.github.io](https://largeworldmodel.github.io/)
   - models: [HF/LargeWorldModel](https://huggingface.co/LargeWorldModel)
+- Paper: [Striped Attention: Faster Ring Attention for Causal Transformers](https://arxiv.org/abs/2311.09431), code: [exists-forall/striped_attention](https://github.com/exists-forall/striped_attention)
+
 
 - Paper: [Online normalizer calculation for softmax](https://arxiv.org/abs/1805.02867) (NVIDIA, 2018)
 - [ELI5: FlashAttention](https://gordicaleksa.medium.com/eli5-flash-attention-5c44017022ad) by [Aleksa Gordić](https://twitter.com/gordic_aleksa)
 - LWM model in ollama: https://ollama.com/ifioravanti/lwm
-- lucid rains pytorch impl (wip?): [lucidrains/ring-attention-pytorch](https://github.com/lucidrains/ring-attention-pytorch)
-
+- lucid rains pytorch impl (wip): [lucidrains/ring-attention-pytorch](https://github.com/lucidrains/ring-attention-pytorch)
+- Zilin Zhu's nice [zhuzilin/ring-flash-attention](https://github.com/zhuzilin/ring-flash-attention) implementation (wip)
 
 
 ### Notebooks
