@@ -1,0 +1,5 @@
+numpy==1.26.4
+torch==2.2.0
+einops==0.7.0
+flash-attn==2.5.5
+git+https://github.com/zhuzilin/ring-flash-attention.git@482e7ff66328c4beddd69167c479642b79d7bcd9#egg=ring_flash_attn
