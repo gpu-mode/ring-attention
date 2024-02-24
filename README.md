@@ -1,6 +1,8 @@
 # ring-attention
-Optimized kernels for ring-attention [WIP]
 
+Ring Attention leverages blockwise computation of self-attention on multiple GPUs and enables training and inference of sequences that would be too long for a single devices.
+
+This repository contains notebooks, experiments and a collection of links to papers and other material related to Ring Attention.
 
 ### Weekly Meeting
 
