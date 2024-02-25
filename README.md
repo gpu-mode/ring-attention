@@ -18,6 +18,7 @@ Every Sunday 5 PM UTC we meet in the "General" voice channel of the CUDA MODE di
   - project site: [largeworldmodel.github.io](https://largeworldmodel.github.io/)
   - models: [HF/LargeWorldModel](https://huggingface.co/LargeWorldModel)
 - Paper: [Striped Attention: Faster Ring Attention for Causal Transformers](https://arxiv.org/abs/2311.09431), code: [exists-forall/striped_attention](https://github.com/exists-forall/striped_attention)
+- Paper (2022): 4D parallelism: [Sequence Parallelism: Long Sequence Training from System Perspective](https://arxiv.org/abs/2105.13120)
 
 
 - Paper: [Online normalizer calculation for softmax](https://arxiv.org/abs/1805.02867) (NVIDIA, 2018)
