@@ -4,6 +4,11 @@ from flash_attn_triton import flash_attn_func
 from flash_attn_triton_og import attention
 
 
+def naive_attn(q, k, v, scale):
+    s = q @ k.mT * scale
+    a = torch.softmax(s, dim=-1)
+    return a @ v
+
 def scaled_dot_product_attention(query, key, value, attn_mask=None, dropout_p=0.0, is_causal=False, scale=None) -> torch.Tensor:
     """reference implementation copied from the pytorch documentation:
     https://pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html
@@ -30,28 +35,27 @@ def scaled_dot_product_attention(query, key, value, attn_mask=None, dropout_p=0.
     return attn_weight @ value
 
 
-def main():
-    batch_size = 2
-    sequence_length = 16
-    num_heads = 4
-    head_dim = 32
-
+def test_openai_attention():
     dtype = torch.float16
     device = torch.device("cuda:0")
 
-    q = torch.randn(batch_size, num_heads, sequence_length, head_dim, dtype=dtype, device=device)
-    k = torch.randn_like(q)
-    v = torch.randn_like(q)
-    scale_factor = q.size(-1) ** -0.5
-    causal = False
+    batch_size, num_heads, head_dim = 2, 2, 64
+    for sequence_length in [16, 32, 64, 128, 256, 512, 1024]:
 
-    a = scaled_dot_product_attention(query=q, key=k, value=v, is_causal=causal, scale=scale_factor)
-    print("out_ref", a.shape)
+        q = torch.randn(batch_size, num_heads, sequence_length, head_dim, dtype=dtype, device=device)
+        k = torch.randn_like(q)
+        v = torch.randn_like(q)
+        scale_factor = q.size(-1) ** -0.5
+        causal = False
 
-    b = attention(q, k, v, causal, scale_factor)
-    print("out_triton", b.shape)
+        a = naive_attn(q, k, v, scale_factor)
+        b = attention(q, k, v, causal, scale_factor)
 
-    print(f"delta: {torch.abs(a-b).sum()}")
+        print(f"sequence_length={sequence_length}, all_close={torch.allclose(a, b, atol=0.01)}, delta (mean)={torch.abs(a-b).mean()}")
+
+
+def main():
+    test_openai_attention()
 
 
 if __name__ == '__main__':
