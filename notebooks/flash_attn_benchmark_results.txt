@@ -1,0 +1,123 @@
+Ran by iron-bound on 2024-02-22:
+
+results from the dual RTX A5000 system
+causal=False, headdim=64, batch_size=32, seqlen=512
+
+Flash2 fwd: 84.08 TFLOPs/s, bwd: 52.88 TFLOPs/s, fwd + bwd: 59.15 TFLOPs/s
+Pytorch fwd: 14.52 TFLOPs/s, bwd: 17.06 TFLOPs/s, fwd + bwd: 16.25 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=64, batch_size=16, seqlen=1024
+
+Flash2 fwd: 81.02 TFLOPs/s, bwd: 62.54 TFLOPs/s, fwd + bwd: 66.90 TFLOPs/s
+Pytorch fwd: 16.72 TFLOPs/s, bwd: 19.12 TFLOPs/s, fwd + bwd: 18.36 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=64, batch_size=8, seqlen=2048
+
+Flash2 fwd: 81.31 TFLOPs/s, bwd: 70.07 TFLOPs/s, fwd + bwd: 72.95 TFLOPs/s
+Pytorch fwd: 15.50 TFLOPs/s, bwd: 18.70 TFLOPs/s, fwd + bwd: 17.66 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=64, batch_size=4, seqlen=4096
+
+Flash2 fwd: 81.69 TFLOPs/s, bwd: 74.80 TFLOPs/s, fwd + bwd: 76.64 TFLOPs/s
+Pytorch fwd: 18.56 TFLOPs/s, bwd: 19.67 TFLOPs/s, fwd + bwd: 19.34 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=64, batch_size=2, seqlen=8192
+
+Flash2 fwd: 81.86 TFLOPs/s, bwd: 77.42 TFLOPs/s, fwd + bwd: 78.64 TFLOPs/s
+Pytorch fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=64, batch_size=1, seqlen=16384
+
+Flash2 fwd: 82.60 TFLOPs/s, bwd: 78.50 TFLOPs/s, fwd + bwd: 79.63 TFLOPs/s
+Pytorch fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=128, batch_size=32, seqlen=512
+
+Flash2 fwd: 82.91 TFLOPs/s, bwd: 49.25 TFLOPs/s, fwd + bwd: 55.71 TFLOPs/s
+Pytorch fwd: 20.51 TFLOPs/s, bwd: 26.73 TFLOPs/s, fwd + bwd: 24.60 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=128, batch_size=16, seqlen=1024
+
+Flash2 fwd: 79.48 TFLOPs/s, bwd: 57.66 TFLOPs/s, fwd + bwd: 62.57 TFLOPs/s
+Pytorch fwd: 25.90 TFLOPs/s, bwd: 32.16 TFLOPs/s, fwd + bwd: 30.08 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=128, batch_size=8, seqlen=2048
+
+Flash2 fwd: 80.54 TFLOPs/s, bwd: 64.37 TFLOPs/s, fwd + bwd: 68.29 TFLOPs/s
+Pytorch fwd: 26.50 TFLOPs/s, bwd: 33.92 TFLOPs/s, fwd + bwd: 31.41 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=128, batch_size=4, seqlen=4096
+
+Flash2 fwd: 82.49 TFLOPs/s, bwd: 68.40 TFLOPs/s, fwd + bwd: 71.91 TFLOPs/s
+Pytorch fwd: 31.77 TFLOPs/s, bwd: 35.66 TFLOPs/s, fwd + bwd: 34.46 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=128, batch_size=2, seqlen=8192
+
+Flash2 fwd: 83.24 TFLOPs/s, bwd: 70.70 TFLOPs/s, fwd + bwd: 73.88 TFLOPs/s
+Pytorch fwd: 32.55 TFLOPs/s, bwd: 36.49 TFLOPs/s, fwd + bwd: 35.27 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=False, headdim=128, batch_size=1, seqlen=16384
+
+Flash2 fwd: 83.51 TFLOPs/s, bwd: 70.94 TFLOPs/s, fwd + bwd: 74.13 TFLOPs/s
+Pytorch fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=64, batch_size=32, seqlen=512
+
+Flash2 fwd: 51.81 TFLOPs/s, bwd: 36.22 TFLOPs/s, fwd + bwd: 39.62 TFLOPs/s
+Pytorch fwd: 5.24 TFLOPs/s, bwd: 8.53 TFLOPs/s, fwd + bwd: 7.23 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=64, batch_size=16, seqlen=1024
+
+Flash2 fwd: 68.11 TFLOPs/s, bwd: 46.40 TFLOPs/s, fwd + bwd: 51.05 TFLOPs/s
+Pytorch fwd: 5.43 TFLOPs/s, bwd: 9.60 TFLOPs/s, fwd + bwd: 7.87 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=64, batch_size=8, seqlen=2048
+
+Flash2 fwd: 70.29 TFLOPs/s, bwd: 59.55 TFLOPs/s, fwd + bwd: 62.27 TFLOPs/s
+Pytorch fwd: 5.41 TFLOPs/s, bwd: 9.38 TFLOPs/s, fwd + bwd: 7.76 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=64, batch_size=4, seqlen=4096
+
+Flash2 fwd: 74.57 TFLOPs/s, bwd: 65.41 TFLOPs/s, fwd + bwd: 67.79 TFLOPs/s
+Pytorch fwd: 5.60 TFLOPs/s, bwd: 9.81 TFLOPs/s, fwd + bwd: 8.08 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=64, batch_size=2, seqlen=8192
+
+Flash2 fwd: 75.38 TFLOPs/s, bwd: 71.20 TFLOPs/s, fwd + bwd: 72.35 TFLOPs/s
+Pytorch fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=64, batch_size=1, seqlen=16384
+
+Flash2 fwd: 75.68 TFLOPs/s, bwd: 73.99 TFLOPs/s, fwd + bwd: 74.46 TFLOPs/s
+Pytorch fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=128, batch_size=32, seqlen=512
+
+Flash2 fwd: 59.04 TFLOPs/s, bwd: 34.96 TFLOPs/s, fwd + bwd: 39.57 TFLOPs/s
+Pytorch fwd: 7.99 TFLOPs/s, bwd: 13.42 TFLOPs/s, fwd + bwd: 11.24 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=128, batch_size=16, seqlen=1024
+
+Flash2 fwd: 67.22 TFLOPs/s, bwd: 45.18 TFLOPs/s, fwd + bwd: 49.85 TFLOPs/s
+Pytorch fwd: 9.14 TFLOPs/s, bwd: 16.29 TFLOPs/s, fwd + bwd: 13.31 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=128, batch_size=8, seqlen=2048
+
+Flash2 fwd: 67.44 TFLOPs/s, bwd: 54.87 TFLOPs/s, fwd + bwd: 57.96 TFLOPs/s
+Pytorch fwd: 9.58 TFLOPs/s, bwd: 17.10 TFLOPs/s, fwd + bwd: 13.97 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=128, batch_size=4, seqlen=4096
+
+Flash2 fwd: 68.65 TFLOPs/s, bwd: 62.42 TFLOPs/s, fwd + bwd: 64.08 TFLOPs/s
+Pytorch fwd: 10.09 TFLOPs/s, bwd: 18.08 TFLOPs/s, fwd + bwd: 14.75 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=128, batch_size=2, seqlen=8192
+
+Flash2 fwd: 68.06 TFLOPs/s, bwd: 67.21 TFLOPs/s, fwd + bwd: 67.45 TFLOPs/s
+Pytorch fwd: 10.03 TFLOPs/s, bwd: 18.42 TFLOPs/s, fwd + bwd: 14.87 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+causal=True, headdim=128, batch_size=1, seqlen=16384
+
+Flash2 fwd: 65.36 TFLOPs/s, bwd: 69.11 TFLOPs/s, fwd + bwd: 68.00 TFLOPs/s
+Pytorch fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
+Triton fwd: 0.00 TFLOPs/s, bwd: 0.00 TFLOPs/s, fwd + bwd: 0.00 TFLOPs/s
