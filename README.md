@@ -24,8 +24,8 @@ Every Sunday 5 PM UTC we meet in the "General" voice channel of the CUDA MODE di
 - Paper: [Online normalizer calculation for softmax](https://arxiv.org/abs/1805.02867) (NVIDIA, 2018)
 - [ELI5: FlashAttention](https://gordicaleksa.medium.com/eli5-flash-attention-5c44017022ad) by [Aleksa Gordić](https://twitter.com/gordic_aleksa)
 - LWM model in ollama: https://ollama.com/ifioravanti/lwm
-- lucid rains pytorch impl (wip): [lucidrains/ring-attention-pytorch](https://github.com/lucidrains/ring-attention-pytorch)
-- Zilin Zhu's nice [zhuzilin/ring-flash-attention](https://github.com/zhuzilin/ring-flash-attention) implementation (wip)
+- Phil Wang's (lucidrain) pytorch impl: [lucidrains/ring-attention-pytorch](https://github.com/lucidrains/ring-attention-pytorch)
+- Zilin Zhu's nice [zhuzilin/ring-flash-attention](https://github.com/zhuzilin/ring-flash-attention) implementation
 
 
 ### Notebooks
