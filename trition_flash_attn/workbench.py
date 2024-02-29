@@ -9,6 +9,7 @@ def naive_attn(q, k, v, scale):
     a = torch.softmax(s, dim=-1)
     return a @ v
 
+
 def scaled_dot_product_attention(query, key, value, attn_mask=None, dropout_p=0.0, is_causal=False, scale=None) -> torch.Tensor:
     """reference implementation copied from the pytorch documentation:
     https://pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html
