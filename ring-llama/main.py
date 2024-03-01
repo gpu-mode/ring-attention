@@ -16,6 +16,7 @@ def load_model(
     torch_dtype: torch.dtype,
     device: torch.DeviceObjType,
     skip_load: bool = False,
+    no_weight_init: bool = False,
 ):
     tokenizer = LlamaTokenizerFast.from_pretrained(model_name, cache_dir=cache_dir)
 
@@ -26,7 +27,7 @@ def load_model(
             config, torch_dtype=torch_dtype
         )
         print("using llama config:", config)
-        init_contexts = [no_init_weights(_enable=True)]
+        init_contexts = [no_init_weights(_enable=no_weight_init)]
         with ContextManagers(init_contexts):
             LlamaForCausalLM._set_default_torch_dtype(torch_dtype)
             model = LlamaForCausalLM(config)
@@ -36,7 +37,7 @@ def load_model(
             cache_dir=cache_dir,
             torch_dtype=torch_dtype,
             attn_implementation="flash_attention_2",
-            device=device,
+            device_map=device,
         )
     return model, tokenizer
 
@@ -55,7 +56,7 @@ def main():
 
     print(f"world_size: {world_size}, device: {device}")
 
-    skip_load = True
+    skip_load = False
     model, tokenizer = load_model(
         "meta-llama/Llama-2-7b-chat-hf",
         cache_dir="/workspace/hf_home/",
@@ -66,9 +67,10 @@ def main():
     model.eval()
     model.to(device)
 
-    x = tokenizer("Hello I am the llama, test", return_tensors="pt")
-
+    #x = tokenizer("Hello I am the llama, test", return_tensors="pt")
     #tokenized_input = x.input_ids
+
+    # temporarily use dummy input (ensure shape is same for both devices)
     tokenized_input = torch.arange(32).unsqueeze(0)
     # print("tokenized_input", tokenized_input.shape)
 
@@ -91,6 +93,8 @@ def main():
 
     torch.distributed.all_gather([a,b], y, group=None, async_op=False)
     print("ok", a[0, 1, 0:10])
+
+    torch.save([a,b], "ring_attn_output.pt")
 
 
 if __name__ == "__main__":
