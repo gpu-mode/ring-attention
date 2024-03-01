@@ -8,6 +8,7 @@ from modeling_llama import LlamaForCausalLM
 from tokenization_llama_fast import LlamaTokenizerFast
 import torch.distributed as dist
 
+from ring_flash_attn import ring_flash_attn_qkvpacked_func
 
 def load_model(
     model_name: str,
@@ -65,14 +66,16 @@ def main():
     model.eval()
     model.to(device)
 
-    x = tokenizer("Hello I am the llama, ", return_tensors="pt")
+    x = tokenizer("Hello I am the llama, test", return_tensors="pt")
 
-    tokenized_input = x.input_ids
+    #tokenized_input = x.input_ids
+    tokenized_input = torch.arange(32).unsqueeze(0)
     # print("tokenized_input", tokenized_input.shape)
 
     input_chunks = tokenized_input.chunk(chunks=world_size, dim=1)
     # print("input_chunks", input_chunks)
     x = input_chunks[rank]
+    print(f"{rank=} {x.shape=}")
 
     print(f"model input x for rank: {rank}:", x)
     x = x.to(device)
@@ -80,6 +83,14 @@ def main():
     y = model(x).logits
 
     print(f"output logits for rank: {rank}:", y.shape, y.dtype, y.device)
+
+    vocab_size = y.size(-1)
+    print("y", y[0,1,0:10])
+    a = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
+    b = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
+
+    torch.distributed.all_gather([a,b], y, group=None, async_op=False)
+    print("ok", a[0, 1, 0:10])
 
 
 if __name__ == "__main__":

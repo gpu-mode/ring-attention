@@ -52,10 +52,12 @@ from configuration_llama import LlamaConfig
 
 
 if is_flash_attn_2_available():
-    from flash_attn import flash_attn_func, flash_attn_varlen_func
+    from flash_attn import flash_attn_func, flash_attn_varlen_func, flash_attn_qkvpacked_func, flash_attn_varlen_qkvpacked_func
     from flash_attn.bert_padding import index_first_axis, pad_input, unpad_input  # noqa
 else:
     print("no flash2 available")
+
+from ring_flash_attn import ring_flash_attn_varlen_qkvpacked_func, ring_flash_attn_qkvpacked_func
 
 
 logger = logging.get_logger(__name__)
@@ -606,6 +608,68 @@ class LlamaFlashAttention2(LlamaAttention):
         )
 
 
+class LlamaRingFlashAttention(LlamaFlashAttention2):
+    def _flash_attention_forward(
+        self, query_states, key_states, value_states, attention_mask, query_length, dropout=0.0, softmax_scale=None
+    ):
+        """
+        Calls the forward method of Ring Flash Attention - if the input hidden states contain at least one padding token
+        first unpad the input, then computes the attention scores and pad the final attention scores.
+
+        Args:
+            query_states (`torch.Tensor`):
+                Input query states to be passed to Flash Attention API
+            key_states (`torch.Tensor`):
+                Input key states to be passed to Flash Attention API
+            value_states (`torch.Tensor`):
+                Input value states to be passed to Flash Attention API
+            attention_mask (`torch.Tensor`):
+                The padding mask - corresponds to a tensor of size `(batch_size, seq_len)` where 0 stands for the
+                position of padding tokens and 1 for the position of non-padding tokens.
+            dropout (`int`, *optional*):
+                Attention dropout
+            softmax_scale (`float`, *optional*):
+                The scaling of QK^T before applying softmax. Default to 1 / sqrt(head_dim)
+        """
+        if not self._flash_attn_uses_top_left_mask:
+            causal = self.is_causal
+        else:
+            # TODO: Remove the `query_length != 1` check once Flash Attention for RoCm is bumped to 2.1. For details, please see the comment in LlamaFlashAttention2 __init__.
+            causal = self.is_causal and query_length != 1
+
+        # print(f"flash_attn_varlen_func(query_states={query_states.shape}, key_states={key_states.shape}, value_states={value_states.shape})")
+
+        qkv = torch.cat((query_states.unsqueeze(-3), key_states.unsqueeze(-3), value_states.unsqueeze(-3)), dim=-3)
+        print("qkv", qkv.shape, query_states.device)
+
+        # Contains at least one padding token in the sequence
+        if attention_mask is not None:
+            batch_size = query_states.shape[0]
+            query_states, key_states, value_states, indices_q, cu_seq_lens, max_seq_lens = self._upad_input(
+                query_states, key_states, value_states, attention_mask, query_length
+            )
+
+            # cu_seqlens_q, cu_seqlens_k = cu_seq_lens
+            # max_seqlen_in_batch_q, max_seqlen_in_batch_k = max_seq_lens
+
+            #attn_output_unpad = flash_attn_varlen_qkvpacked_func(
+            attn_output_unpad = ring_flash_attn_varlen_qkvpacked_func(
+                qkv,
+                cu_seq_lens,
+                max_seq_lens,
+                dropout_p=dropout,
+                softmax_scale=softmax_scale,
+                causal=causal,
+            )
+
+            attn_output = pad_input(attn_output_unpad, indices_q, batch_size, query_length)
+        else:
+            #attn_output = flash_attn_qkvpacked_func(qkv, dropout_p=dropout, softmax_scale=softmax_scale, causal=causal)
+            attn_output = ring_flash_attn_qkvpacked_func(qkv, dropout_p=dropout, softmax_scale=softmax_scale, causal=causal)
+
+        return attn_output
+
+
 class LlamaSdpaAttention(LlamaAttention):
     """
     Llama attention module using torch.nn.functional.scaled_dot_product_attention. This module inherits from
@@ -693,7 +757,8 @@ class LlamaSdpaAttention(LlamaAttention):
 
 LLAMA_ATTENTION_CLASSES = {
     "eager": LlamaAttention,
-    "flash_attention_2": LlamaFlashAttention2,
+    "flash_attention_2": LlamaRingFlashAttention, #LlamaFlashAttention2,
+    #"ring_flash_attention": LlamaRingFlashAttention,
     "sdpa": LlamaSdpaAttention,
 }
 
@@ -703,6 +768,7 @@ class LlamaDecoderLayer(nn.Module):
         super().__init__()
         self.hidden_size = config.hidden_size
 
+        #print("using attn impl:", config._attn_implementation)
         self.self_attn = LLAMA_ATTENTION_CLASSES[config._attn_implementation](config=config, layer_idx=layer_idx)
 
         self.mlp = LlamaMLP(config)
