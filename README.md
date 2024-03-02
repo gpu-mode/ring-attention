@@ -19,7 +19,7 @@ Every Sunday 5 PM UTC we meet in the "General" voice channel of the CUDA MODE di
   - models: [HF/LargeWorldModel](https://huggingface.co/LargeWorldModel)
 - Paper: [Striped Attention: Faster Ring Attention for Causal Transformers](https://arxiv.org/abs/2311.09431), code: [exists-forall/striped_attention](https://github.com/exists-forall/striped_attention)
 - Paper (2022): 4D parallelism: [Sequence Parallelism: Long Sequence Training from System Perspective](https://arxiv.org/abs/2105.13120)
-
+- related: [Flash-Decoding for long-context inference](https://www.together.ai/blog/flash-decoding-for-long-context-inference) (together.ai blog)
 
 - Paper: [Online normalizer calculation for softmax](https://arxiv.org/abs/1805.02867) (NVIDIA, 2018)
 - [ELI5: FlashAttention](https://gordicaleksa.medium.com/eli5-flash-attention-5c44017022ad) by [Aleksa Gordić](https://twitter.com/gordic_aleksa)
