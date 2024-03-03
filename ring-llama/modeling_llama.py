@@ -19,6 +19,7 @@
 # limitations under the License.
 """ PyTorch LLaMA model."""
 import math
+import time
 import warnings
 from typing import List, Optional, Tuple, Union
 
@@ -640,7 +641,7 @@ class LlamaRingFlashAttention(LlamaFlashAttention2):
         # print(f"flash_attn_varlen_func(query_states={query_states.shape}, key_states={key_states.shape}, value_states={value_states.shape})")
 
         qkv = torch.cat((query_states.unsqueeze(-3), key_states.unsqueeze(-3), value_states.unsqueeze(-3)), dim=-3)
-        print("qkv", qkv.shape, query_states.device)
+        print(f"[{time.monotonic_ns()}] >>> dev={query_states.device.index} layer_idx={self.layer_idx}", flush=True)
 
         # Contains at least one padding token in the sequence
         if attention_mask is not None:
@@ -666,6 +667,8 @@ class LlamaRingFlashAttention(LlamaFlashAttention2):
         else:
             #attn_output = flash_attn_qkvpacked_func(qkv, dropout_p=dropout, softmax_scale=softmax_scale, causal=causal)
             attn_output = ring_flash_attn_qkvpacked_func(qkv, dropout_p=dropout, softmax_scale=softmax_scale, causal=causal)
+
+        print(f"[{time.monotonic_ns()}] <<< dev={query_states.device.index} layer_idx={self.layer_idx}", flush=True)
 
         return attn_output
 
@@ -774,6 +777,7 @@ class LlamaDecoderLayer(nn.Module):
         self.mlp = LlamaMLP(config)
         self.input_layernorm = LlamaRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
         self.post_attention_layernorm = LlamaRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.layer_idx = layer_idx
 
     def forward(
         self,

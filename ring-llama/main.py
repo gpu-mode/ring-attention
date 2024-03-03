@@ -63,6 +63,7 @@ def main():
         torch_dtype=dtype,
         device=device,
         skip_load=skip_load,
+        no_weight_init=skip_load,
     )
     model.eval()
     model.to(device)
@@ -94,7 +95,8 @@ def main():
     torch.distributed.all_gather([a,b], y, group=None, async_op=False)
     print("ok", a[0, 1, 0:10])
 
-    torch.save([a,b], "ring_attn_output.pt")
+    if rank == 0:
+        torch.save(torch.cat([a,b], dim=1).squeeze(), "ring_attn_output.pt")
 
 
 if __name__ == "__main__":
