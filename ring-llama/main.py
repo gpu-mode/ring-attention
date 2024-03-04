@@ -10,6 +10,7 @@ import torch.distributed as dist
 
 from ring_flash_attn import ring_flash_attn_qkvpacked_func
 
+
 def load_model(
     model_name: str,
     cache_dir: str,
@@ -42,6 +43,16 @@ def load_model(
     return model, tokenizer
 
 
+# source https://stackoverflow.com/a/1094933
+def sizeof_fmt(num, suffix="B"):
+    for unit in ("", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"):
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f}Yi{suffix}"
+
+
+@torch.inference_mode()
 def main():
     dtype = torch.float16
     if "RANK" in os.environ:
@@ -68,8 +79,11 @@ def main():
     model.eval()
     model.to(device)
 
-    #x = tokenizer("Hello I am the llama, test", return_tensors="pt")
-    #tokenized_input = x.input_ids
+    # x = tokenizer("Hello I am the llama, test", return_tensors="pt")
+    # tokenized_input = x.input_ids
+
+    torch.cuda.reset_peak_memory_stats()
+    max_mem_allocated_before = torch.cuda.max_memory_allocated(device)
 
     # temporarily use dummy input (ensure shape is same for both devices)
     tokenized_input = torch.arange(32).unsqueeze(0)
@@ -93,15 +107,20 @@ def main():
     print(f"output logits for rank: {rank}:", y.shape, y.dtype, y.device)
 
     vocab_size = y.size(-1)
-    print("y", y[0,1,0:10])
+    print("y", y[0, 1, 0:10])
     a = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
     b = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
 
-    torch.distributed.all_gather([a,b], y, group=None, async_op=False)
+    torch.distributed.all_gather([a, b], y, group=None, async_op=False)
     print("ok", a[0, 1, 0:10])
 
-    if rank == 0:
-        torch.save(torch.cat([a,b], dim=1).squeeze(), "ring_attn_output.pt")
+    max_mem_allocated_after = torch.cuda.max_memory_allocated(device)
+    print(
+        f"{device} delta: {sizeof_fmt(max_mem_allocated_after-max_mem_allocated_before)}"
+    )
+
+    # if rank == 0:
+    #     torch.save(torch.cat([a,b], dim=1).squeeze(), "ring_attn_output.pt")
 
 
 if __name__ == "__main__":
