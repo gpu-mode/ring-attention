@@ -73,17 +73,22 @@ def main():
 
     # temporarily use dummy input (ensure shape is same for both devices)
     tokenized_input = torch.arange(32).unsqueeze(0)
+    position_ids = torch.arange(32).unsqueeze(0)
     # print("tokenized_input", tokenized_input.shape)
 
     input_chunks = tokenized_input.chunk(chunks=world_size, dim=1)
+    position_ids = position_ids.chunk(chunks=world_size, dim=1)
     # print("input_chunks", input_chunks)
+
     x = input_chunks[rank]
+    x_pos_ids = position_ids[rank]
     print(f"{rank=} {x.shape=}")
 
-    print(f"model input x for rank: {rank}:", x)
     x = x.to(device)
+    x_pos_ids = x_pos_ids.to(device)
+    print(f"model input x for rank: {rank}: {x} (position_ids: {x_pos_ids})")
 
-    y = model(x).logits
+    y = model(x, position_ids=x_pos_ids).logits
 
     print(f"output logits for rank: {rank}:", y.shape, y.dtype, y.device)
 
