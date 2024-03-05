@@ -9,6 +9,7 @@ from tokenization_llama_fast import LlamaTokenizerFast
 import torch.distributed as dist
 
 from ring_flash_attn import ring_flash_attn_qkvpacked_func
+from sample import sample_from_logits
 
 
 def load_model(
@@ -100,24 +101,38 @@ def main():
 
     x = x.to(device)
     x_pos_ids = x_pos_ids.to(device)
-    print(f"model input x for rank: {rank}: {x} (position_ids: {x_pos_ids})")
+    # print(f"model input x for rank: {rank}: {x} (position_ids: {x_pos_ids})")
 
     y = model(x, position_ids=x_pos_ids).logits
 
     print(f"output logits for rank: {rank}:", y.shape, y.dtype, y.device)
 
     vocab_size = y.size(-1)
-    print("y", y[0, 1, 0:10])
-    a = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
-    b = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
+    # print("y", y[0, 1, 0:10])
+    gathered_logits = [torch.zeros_like(y) for _ in range(world_size)]
+    torch.distributed.all_gather(gathered_logits, y,  group=None, async_op=False)
+    # Should the sampling be done only on one GPU ?
+    if rank == 0:
+        # After performing all_gather
+        for i, logit_tensor in enumerate(gathered_logits):
+            print(f"Tensor {i} in gathered_logits has shape: {logit_tensor.shape}")
 
-    torch.distributed.all_gather([a, b], y, group=None, async_op=False)
-    print("ok", a[0, 1, 0:10])
+        # sampled_tokens = sample_from_logits(gathered_logits, strategy="greedy")
+        # sampled_tokens = sample_from_logits(gathered_logits, strategy="top-p", p=0.9)
+        sampled_tokens = sample_from_logits(gathered_logits, strategy="top-k", k=5)
+
+        print(f"Next probable Sampled_Tokens : {sampled_tokens.shape}")
+     
+    # a = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
+    # b = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
+
+    # torch.distributed.all_gather([a, b], y, group=None, async_op=False)
+    # print("ok", a[0, 1, 0:10])
 
     max_mem_allocated_after = torch.cuda.max_memory_allocated(device)
-    print(
-        f"{device} delta: {sizeof_fmt(max_mem_allocated_after-max_mem_allocated_before)}"
-    )
+    # print(
+    #     f"{device} delta: {sizeof_fmt(max_mem_allocated_after-max_mem_allocated_before)}"
+    # )
 
     # if rank == 0:
     #     torch.save(torch.cat([a,b], dim=1).squeeze(), "ring_attn_output.pt")
