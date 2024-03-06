@@ -111,14 +111,19 @@ def main():
     # print("y", y[0, 1, 0:10])
     gathered_logits = [torch.zeros_like(y) for _ in range(world_size)]
     torch.distributed.all_gather(gathered_logits, y, group=None, async_op=False)
+
+    #print("gathered_logits", gathered_logits.shape)
+    next_token_logits = gathered_logits[-1][-1]
+    print("next_token_logits", next_token_logits.shape)
+
     # Should the sampling be done only on one GPU ?
     if rank == 0:
         # After performing all_gather
-        sampled_logits_list = sample_from_logitsV1(gathered_logits, strategy="greedy")
+        sampled_token = sample_from_logitsV1(next_token_logits, strategy="greedy")
         # sampled_logits_list  = sample_from_logitsV1(gathered_logits, strategy="top-p", p=0.9)
         # sampled_logits_list  = sample_from_logitsV1(gathered_logits, strategy="top-k", k=5)
 
-        print(f"Next probable Sampled_Tokens : {sampled_logits_list[0].shape}")
+        print(f"Next probable Sampled_Tokens : sampled_token")
 
     # a = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
     # b = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)

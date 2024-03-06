@@ -111,19 +111,19 @@ def sample_from_logitsV2(gathered_logits, strategy="top-k", k=5, p=0.9):
     return sampled_logits_list
 
 
-def sample_from_logitsV1(gathered_logits, strategy="top-k", k=5, p=0.9):
+def sample_from_logitsV1(next_token_logits, strategy="top-k", k=5, p=0.9):
     # should we take the last token in each gathered logit ?
     # concatenated_logits = torch.cat(gathered_logits, dim=1)
-    summed_last_logits = torch.sum(torch.stack(gathered_logits), dim=0)
+    summed_last_logits = next_token_logits # torch.sum(torch.stack(next_token_logits), dim=0)
     print(f"concatenated logits : {summed_last_logits.shape}")
-    sampled_indices = None
+    sampled_token = None
 
     if strategy == "greedy" or strategy == "top-k":
         probabilities = F.softmax(summed_last_logits, dim=-1)
         if strategy == "greedy":
             # Greedy sampling: select the token with the highest probability at each step
-            sampled_indices = torch.argmax(probabilities, dim=-1)
-            print(f"sample_indices : {sampled_indices.shape}")
+            sampled_token = torch.argmax(probabilities, dim=-1)
+            print(f"sample_indices : {sampled_token.shape}")
         elif strategy == "top-k":
             probabilities = F.softmax(summed_last_logits, dim=-1)
             print(f"probabilities : {probabilities.shape}")
@@ -148,12 +148,12 @@ def sample_from_logitsV1(gathered_logits, strategy="top-k", k=5, p=0.9):
             batch_indices = (
                 torch.arange(batch_size).unsqueeze(-1).to(topk_indices.device)
             )
-            sampled_indices = topk_indices[batch_indices, sampled_from_topk].squeeze(
+            sampled_token = topk_indices[batch_indices, sampled_from_topk].squeeze(
                 -1
             )  # Remove singleton dimension
     elif strategy == "top-p":
         # Apply top-p sampling to logits and then sample
-        sampled_indices = torch.empty(
+        sampled_token = torch.empty(
             summed_last_logits.size(0),
             summed_last_logits.size(1),
             dtype=torch.long,
@@ -167,6 +167,6 @@ def sample_from_logitsV1(gathered_logits, strategy="top-k", k=5, p=0.9):
             next_token_samples = torch.multinomial(
                 probs, 1
             )  # Sample 1 token per sequence
-            sampled_indices[:, i] = next_token_samples.squeeze(-1)
+            sampled_token[:, i] = next_token_samples.squeeze(-1)
 
-    return sampled_indices
+    return sampled_token
