@@ -152,18 +152,18 @@ def sample_from_logitsV1(next_token_logits, strategy="top-k", k=5, p=0.9):
         # Apply top-p sampling to logits and then sample
         sampled_token = torch.empty(
             next_token_logits.size(0),
-            next_token_logits.size(1),
+            # next_token_logits.size(1),
             dtype=torch.long,
             device=next_token_logits.device,
         )
-        for i in range(next_token_logits.shape[1]):  # Iterate through sequence
-            logits = next_token_logits[:, i, :]
+        for i in range(next_token_logits.shape[0]):  # Iterate through sequence
+            logits = next_token_logits[i, :]
             filtered_logits = top_p_sampling(logits, p=p)
             probs = F.softmax(filtered_logits, dim=-1)
             # Use torch.multinomial to sample from the filtered distribution
             next_token_samples = torch.multinomial(
                 probs, 1
             )  # Sample 1 token per sequence
-            sampled_token[:, i] = next_token_samples.squeeze(-1)
+            sampled_token[i] = next_token_samples.squeeze(-1)
 
     return sampled_token

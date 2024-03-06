@@ -125,9 +125,9 @@ def main():
     # Should the sampling be done only on one GPU ?
     if rank == 0:
         # After performing all_gather
-        sampled_token = sample_from_logitsV1(next_token_logits, strategy="greedy")
+        # sampled_token = sample_from_logitsV1(next_token_logits, strategy="greedy")
         # sampled_token  = sample_from_logitsV1(next_token_logits, strategy="top-k", k=5)
-        # sampled_token  = sample_from_logitsV1(next_token_logits, strategy="top-p", p=0.9)
+        sampled_token = sample_from_logitsV1(next_token_logits, strategy="top-p", p=0.9)
 
         print(f"Next probable Sampled_Tokens : {sampled_token.shape}")
 
