@@ -112,20 +112,17 @@ def sample_from_logitsV2(gathered_logits, strategy="top-k", k=5, p=0.9):
 
 
 def sample_from_logitsV1(next_token_logits, strategy="top-k", k=5, p=0.9):
-    # should we take the last token in each gathered logit ?
-    # concatenated_logits = torch.cat(gathered_logits, dim=1)
-    summed_last_logits = next_token_logits # torch.sum(torch.stack(next_token_logits), dim=0)
-    print(f"concatenated logits : {summed_last_logits.shape}")
+
     sampled_token = None
 
     if strategy == "greedy" or strategy == "top-k":
-        probabilities = F.softmax(summed_last_logits, dim=-1)
+        probabilities = F.softmax(next_token_logits, dim=-1)
         if strategy == "greedy":
             # Greedy sampling: select the token with the highest probability at each step
             sampled_token = torch.argmax(probabilities, dim=-1)
-            print(f"sample_indices : {sampled_token.shape}")
+            print(f"sample_indices shape : {sampled_token.shape}")
         elif strategy == "top-k":
-            probabilities = F.softmax(summed_last_logits, dim=-1)
+            probabilities = F.softmax(next_token_logits, dim=-1)
             print(f"probabilities : {probabilities.shape}")
             topk_vals, topk_indices = torch.topk(probabilities, k=k, dim=-1)
             print(f"topk_vals: {topk_vals.shape}, topk_indices : {topk_indices.shape}")
@@ -140,7 +137,7 @@ def sample_from_logitsV1(next_token_logits, strategy="top-k", k=5, p=0.9):
             # topk_vals is now guaranteed to be [batch_size, k], suitable for torch.multinomial
             sampled_from_topk = torch.multinomial(
                 topk_vals, 1
-            )  # [batch_size, 1], samples one index per batch item
+            )  # [sequence, 1], samples one index per batch item
 
             # Gathering the actual token indices corresponding to the sampled positions
             # Use torch.gather or advanced indexing to map back to original token indices
@@ -154,13 +151,13 @@ def sample_from_logitsV1(next_token_logits, strategy="top-k", k=5, p=0.9):
     elif strategy == "top-p":
         # Apply top-p sampling to logits and then sample
         sampled_token = torch.empty(
-            summed_last_logits.size(0),
-            summed_last_logits.size(1),
+            next_token_logits.size(0),
+            next_token_logits.size(1),
             dtype=torch.long,
-            device=summed_last_logits.device,
+            device=next_token_logits.device,
         )
-        for i in range(summed_last_logits.shape[1]):  # Iterate through sequence
-            logits = summed_last_logits[:, i, :]
+        for i in range(next_token_logits.shape[1]):  # Iterate through sequence
+            logits = next_token_logits[:, i, :]
             filtered_logits = top_p_sampling(logits, p=p)
             probs = F.softmax(filtered_logits, dim=-1)
             # Use torch.multinomial to sample from the filtered distribution

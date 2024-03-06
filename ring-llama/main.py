@@ -65,7 +65,6 @@ def main():
         rank = 0
         world_size = 1
         device = torch.device(f"cuda:0")
-
     print(f"world_size: {world_size}, device: {device}")
 
     skip_load = False
@@ -81,7 +80,10 @@ def main():
     model.to(device)
 
     # x = tokenizer("Hello I am the llama, test", return_tensors="pt")
+    # x = tokenizer("Hello who are you? ", return_tensors="pt")
     # tokenized_input = x.input_ids
+    # x =tokenized_input.chunk(chunks=world_size, dim=1)[rank]
+    # x =tokenized_input
 
     torch.cuda.reset_peak_memory_stats()
     max_mem_allocated_before = torch.cuda.max_memory_allocated(device)
@@ -93,7 +95,7 @@ def main():
 
     input_chunks = tokenized_input.chunk(chunks=world_size, dim=1)
     position_ids = position_ids.chunk(chunks=world_size, dim=1)
-    # print("input_chunks", input_chunks)
+    print("input_chunks", input_chunks)
 
     x = input_chunks[rank]
     x_pos_ids = position_ids[rank]
@@ -104,15 +106,19 @@ def main():
     # print(f"model input x for rank: {rank}: {x} (position_ids: {x_pos_ids})")
 
     y = model(x, position_ids=x_pos_ids).logits
-
-    print(f"output logits for rank: {rank}:", y.shape, y.dtype, y.device)
+    # y = model(x).logits
+    # token_ids = y.argmax(dim=-1)
+    # decoded_text = tokenizer.batch_decode(sequences=token_ids)
+    # print(f"decoded_text for rank: {rank}:", decoded_text)
+    # return
+    # print(f"output logits for rank: {rank}:", y.shape, y.dtype, y.device)
 
     vocab_size = y.size(-1)
     # print("y", y[0, 1, 0:10])
     gathered_logits = [torch.zeros_like(y) for _ in range(world_size)]
     torch.distributed.all_gather(gathered_logits, y, group=None, async_op=False)
 
-    #print("gathered_logits", gathered_logits.shape)
+    # print("gathered_logits", gathered_logits.shape)
     next_token_logits = gathered_logits[-1][-1]
     print("next_token_logits", next_token_logits.shape)
 
@@ -120,10 +126,10 @@ def main():
     if rank == 0:
         # After performing all_gather
         sampled_token = sample_from_logitsV1(next_token_logits, strategy="greedy")
-        # sampled_logits_list  = sample_from_logitsV1(gathered_logits, strategy="top-p", p=0.9)
-        # sampled_logits_list  = sample_from_logitsV1(gathered_logits, strategy="top-k", k=5)
+        # sampled_token  = sample_from_logitsV1(next_token_logits, strategy="top-k", k=5)
+        # sampled_token  = sample_from_logitsV1(next_token_logits, strategy="top-p", p=0.9)
 
-        print(f"Next probable Sampled_Tokens : sampled_token")
+        print(f"Next probable Sampled_Tokens : {sampled_token.shape}")
 
     # a = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
     # b = torch.zeros(x.size(0), x.size(1), vocab_size, dtype=y.dtype, device=device)
