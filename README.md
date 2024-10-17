@@ -4,11 +4,6 @@ Ring Attention leverages blockwise computation of self-attention on multiple GPU
 
 This repository contains notebooks, experiments and a collection of links to papers and other material related to Ring Attention.
 
-### Weekly Meeting
-
-Every Sunday 5 PM UTC we meet in the "General" voice channel of the CUDA MODE discord server. You can contact us any time asynchronously in the `#ring-attention` channel.
-
-
 ### Reserach / Material
 
 - Paper: [Ring Attention with Blockwise Transformers for Near-Infinite Context](https://arxiv.org/abs/2310.01889)
@@ -40,4 +35,4 @@ Every Sunday 5 PM UTC we meet in the "General" voice channel of the CUDA MODE di
 
 ## How to contribute
 
-Contact us on the **CUDA MODE** discord server: [https://discord.gg/cudamode](https://discord.gg/cudamode), PRs are welcome (please create an issue first).
+Contact us on the **GPU MODE** discord server: [https://discord.gg/gpumode](https://discord.gg/gpumode), PRs are welcome (please create an issue first).
